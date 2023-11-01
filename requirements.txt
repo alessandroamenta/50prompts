@@ -1,0 +1,7 @@
+pandas
+streamlit
+httpx
+openai
+langchain
+aiohttp
+openpyxl
