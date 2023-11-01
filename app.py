@@ -29,7 +29,7 @@ st.title("🧠 GPT Answer Generator")
 st.write("""
 Generate answers for up to 50 prompts using OpenAI.
 """)
-st.warning("You can input lots more, but for perfomance and to avoid OpenAI rate limits, I suggest keeping it to 50.")
+st.warning("For best performance and to stay within OpenAI's rate limits, it's recommended to limit to 50 prompts.")
 
 
 # Pricing details
