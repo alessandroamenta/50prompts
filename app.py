@@ -3,6 +3,8 @@ import pandas as pd
 import streamlit as st
 import asyncio
 import aiohttp
+from aiohttp.client_exceptions import ContentTypeError
+
 
 API_URL = "https://api.openai.com/v1/chat/completions"
 
@@ -46,10 +48,14 @@ async def get_answer(prompt, model_choice):
         "model": model_choice,
         "messages": [{"role": "user", "content": prompt}]
     }
-    async with aiohttp.ClientSession() as session:
-        async with session.post(API_URL, headers=headers, json=data) as response:
-            response_data = await response.json()
-            return response_data['choices'][0]['message']['content']
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.post(API_URL, headers=headers, json=data) as response:
+                response_data = await response.json()
+                return response_data['choices'][0]['message']['content']
+    except ContentTypeError:
+        st.error("There's an error on OpenAI's end. No worries, just try again chief, it should work on the next try! :)")
+        return "Error: Couldn't fetch the answer for this prompt."
 
 # Radio button to select input method
 input_method = st.radio("📥 Choose your input method:", ["Text Box", "File Upload"])
