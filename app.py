@@ -29,7 +29,7 @@ st.title("🧠 GPT Answer Generator")
 st.write("""
 Generate answers for up to 50 prompts using OpenAI.
 """)
-st.warning("You can input lots more, but for best results and to avoid OpenAI rate limits, I suggest to keep it to 50.")
+st.warning("You can input lots more, but for perfomance and to avoid OpenAI rate limits, I suggest keeping it to 50.")
 
 
 # Pricing details
@@ -58,7 +58,7 @@ async def get_answer(prompt, model_choice):
         return "Error: Couldn't fetch the answer for this prompt."
 
 # Radio button to select input method
-input_method = st.radio("📥 Choose your input method:", ["Text Box", "File Upload"])
+input_method = st.radio("📥 Choose input method:", ["Text Box", "File Upload"])
 
 if input_method == "Text Box":
     st.write("Please separate each prompt with a blank line.")
@@ -79,7 +79,7 @@ else:
 
 # Button to generate answers
 if st.button("🚀 Generate Answers"):
-    with st.spinner('Generating answers...'):
+    with st.spinner('👩‍🍳 GPT is whipping up your answers! Hang tight, this will just take a moment... 🍳'):
         answers = []
 
         # Use asyncio to process the prompts concurrently
