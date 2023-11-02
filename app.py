@@ -147,10 +147,11 @@ if st.button("🚀 Generate Answers"):
                     output = BytesIO()
                     with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
                         df.to_excel(writer, index=False)
-                        writer.save()
-                        excel_data = output.getvalue()
-                    b64 = base64.b64encode(excel_data).decode('utf-8')
+                        # No need to call writer.save() - it's handled automatically
                     
+                    # Make sure to get the value after exiting the with block
+                    excel_data = output.getvalue()
+                    b64 = base64.b64encode(excel_data).decode('utf-8')
                     st.success("🎉 Answers generated successfully!")
                     
                     # Display the styled download link directly
