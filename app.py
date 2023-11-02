@@ -52,7 +52,7 @@ async def is_valid_api_key(api_key):
     data = {
         "model": "gpt-3.5-turbo-16k",  # Use the model you want to check with
         "messages": [{"role": "user", "content": "test"}],
-        "max_tokens": 1
+        "max_tokens": 350
     }
     async with aiohttp.ClientSession() as session:
         async with session.post(API_URL, headers=headers, json=data) as response:
@@ -72,7 +72,6 @@ async def get_answer(prompt, model_choice, common_instructions):
     data = {
         "model": model_choice,
         "messages": [{"role": "user", "content": full_prompt}],
-        "max_tokens": 1250,
         "temperature": 0.3,
         "top_p": 1
     }
