@@ -30,7 +30,7 @@ with st.sidebar.expander("🔍 How to use"):
     5. 📝 If using Text Box, separate each prompt with a blank line.
     6. 📂 If using File Upload, upload a CSV or Excel file.
     7. 🚀 Click the "Generate Answers" button.
-    8. 📤 Once answers are generated, download the CSV file with results.
+    8. 📤 Once answers are generated, download the Excel file with results.
     """)
 
 st.title("🧠 GPT Answer Generator")
