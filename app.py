@@ -117,7 +117,7 @@ if st.button("🚀 Generate Answers"):
         df = pd.DataFrame({
             'Prompts': prompts,
             'Answers': answers
-        })
+        }) 
 
         # Convert DataFrame to CSV and let the user download it
         csv = df.to_csv(index=False)
