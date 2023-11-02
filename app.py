@@ -13,16 +13,24 @@ st.sidebar.title("🛠️ Settings")
 API_KEY = st.sidebar.text_input("🔑 OpenAI API Key", value='', type='password')
 model_choice = st.sidebar.selectbox("🤖 Choose model:", ["gpt-3.5-turbo-16k", "gpt-4"])
 
+# Add a text area for common instructions in the sidebar
+with st.sidebar.expander("📝 Custom Instructions"):
+    common_instructions = st.text_area(
+        "Enter instructions to apply to all prompts (e.g., 'You are an expert copywriter, respond in Dutch.')", 
+        ''
+    )
+
 # Instructions Expander
-with st.sidebar.expander("📖 Instructions"): 
+with st.sidebar.expander("🔍 How to use"): 
     st.write("""
     1. 🔑 Input your OpenAI API key.
     2. 🤖 Pick the model.
-    3. 📥 Choose the input method: Text Box or File Upload.
-    4. 📝 If using Text Box, separate each prompt with a blank line.
-    5. 📂 If using File Upload, upload a CSV or Excel file.
-    6. 🚀 Click the "Generate Answers" button.
-    7. 📤 Once answers are generated, download the CSV file with results.
+    3. ✍️ Add custom instructions for all prompts (if needed).
+    4. 📥 Choose the input method: Text Box or File Upload.
+    5. 📝 If using Text Box, separate each prompt with a blank line.
+    6. 📂 If using File Upload, upload a CSV or Excel file.
+    7. 🚀 Click the "Generate Answers" button.
+    8. 📤 Once answers are generated, download the CSV file with results.
     """)
 
 st.title("🧠 GPT Answer Generator")
@@ -38,7 +46,10 @@ PRICING = {
     "gpt-4": {"input": 0.03, "output": 0.06}
 }
 
-async def get_answer(prompt, model_choice):
+async def get_answer(prompt, model_choice, common_instructions):
+    # Prepend instructions to the actual prompt if provided
+    full_prompt = f"{common_instructions}\n{prompt}" if common_instructions else prompt
+
     headers = {
         "Authorization": f"Bearer {API_KEY}",
         "Content-Type": "application/json",
@@ -46,7 +57,10 @@ async def get_answer(prompt, model_choice):
     }
     data = {
         "model": model_choice,
-        "messages": [{"role": "user", "content": prompt}]
+        "messages": [{"role": "user", "content": full_prompt}],
+        "max_tokens": 1250,
+        "temperature": 0.3,
+        "top_p": 1,
     }
     try:
         async with aiohttp.ClientSession() as session:
@@ -77,7 +91,7 @@ elif input_method == "File Upload":
 else:
     prompts = []
 
-# Button to generate answers
+# Modify the button click event to pass the common instructions to the get_answer function
 if st.button("🚀 Generate Answers"):
     with st.spinner('👩‍🍳 GPT is whipping up your answers! Hang tight, this will just take a moment... 🍳'):
         answers = []
@@ -85,7 +99,7 @@ if st.button("🚀 Generate Answers"):
         # Use asyncio to process the prompts concurrently
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
-        answers = loop.run_until_complete(asyncio.gather(*(get_answer(prompt, model_choice) for prompt in prompts)))
+        answers = loop.run_until_complete(asyncio.gather(*(get_answer(prompt, model_choice, common_instructions) for prompt in prompts)))
 
         # Calculate tokens (this method is a rough estimate; adjust as needed)
         total_tokens = sum(len(prompt.split()) + len(answer.split()) for prompt, answer in zip(prompts, answers))
