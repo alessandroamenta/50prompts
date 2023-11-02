@@ -4,6 +4,7 @@ import streamlit as st
 import asyncio
 import aiohttp
 from aiohttp.client_exceptions import ContentTypeError
+from io import BytesIO
 
 API_URL = "https://api.openai.com/v1/chat/completions"
 
@@ -136,19 +137,24 @@ if st.button("🚀 Generate Answers"):
                     st.write(f"Total tokens used: {total_tokens}")
                     st.write(f"Total cost: ${total_cost:.2f}")
 
-                    # Create a DataFrame
+                   # Create a DataFrame
                     df = pd.DataFrame({
                         'Prompts': prompts,
                         'Answers': answers
                     })
-
-                    # Convert DataFrame to CSV and let the user download it
-                    csv = df.to_csv(index=False)
-                    b64 = base64.b64encode(csv.encode()).decode()
-
+                    
+                    # Convert DataFrame to Excel and let the user download it
+                    output = BytesIO()
+                    with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+                        df.to_excel(writer, index=False)
+                        writer.save()
+                        excel_data = output.getvalue()
+                    b64 = base64.b64encode(excel_data).decode('utf-8')
+                    
                     st.success("🎉 Answers generated successfully!")
-
+                    
                     # Display the styled download link directly
-                    st.markdown(f'<a href="data:file/csv;base64,{b64}" download="answers.csv" style="display: inline-block; padding: 0.25em 0.5em; text-decoration: none; background-color: #4CAF50; color: white; border-radius: 3px; cursor: pointer;">📤 Download CSV File</a>', unsafe_allow_html=True)
+                    st.markdown(f'<a href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{b64}" download="answers.xlsx" style="display: inline-block; padding: 0.25em 0.5em; text-decoration: none; background-color: #4CAF50; color: white; border-radius: 3px; cursor: pointer;">📤 Download Excel File</a>', unsafe_allow_html=True)
+
         else:
             st.error("The API key provided is not valid. Please check your key and try again.")
